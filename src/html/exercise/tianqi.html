@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+        ul,li{margin: 0;padding: 0;list-style: none;}
+        li{width: 20%;float: left;border:1px solid #ccc;box-sizing: border-box;}
+    </style>
+    <script>
+    	document.addEventListener('DOMContentLoaded',()=>{
+    		var output = document.querySelector('#output');
+    		var txt = document.querySelector('#txt');
+    		var btn = document.querySelector('#btn');
+    		
+    		btn.onclick = ()=>{
+    			var _txt = txt.value;
+    			var p = new Promise(function(resolve,reject){
+    				var status = [200,304];
+    			var xhr = new XMLHttpRequest();
+    			xhr.onreadystatechange = ()=>{
+    			if(xhr.readyState==4 && status.indexOf(xhr.status)!=-1){
+	    				var res = JSON.parse(xhr.responseText)
+	    				console.log(resolve)
+	    				output.innerHTML='';
+	    				if(resolve){
+	    					resolve(res);
+	    				}else{
+	    					reject();
+	    				}
+	    				
+	    			}
+	    		}
+    			xhr.open('get','http://wthrcdn.etouch.cn/weather_mini?city='+_txt,true);
+    			xhr.send(null);
+    			})
+    			p.then(function(res){
+    				var h3 = document.createElement('h3');
+    				var ul = document.createElement('ul');
+    				var ganmao  = document.createElement('p');
+    				var wendu = document.createElement('p');
+    				h3.innerHTML = 'CITY'+ res.data.city;
+    				ganmao.innerHTML = 'TIPS'+ res.data.ganmao;
+    				wendu.innerHTML = '当前温度'+res.data.wendu;
+    				ul.innerHTML = res.data.forecast.map((item)=>{
+    					var fengli = item.fengli.slice(2,-1);
+    					 	return	`<li>
+										<p>日期${item.date}</p>
+										<p>最${item.high}/最${item.low}</p>
+										<p>风力${fengli}/风向${item.fengxiang}</p>
+									</li>`;
+    				}).join('');
+    				output.appendChild(h3);
+    				output.appendChild(ul);
+    				output.appendChild(ganmao);
+    				output.appendChild(wendu);
+    			}).catch(function(){
+    				output.innerHTML = '请输入正确的城市名'
+    			})
+    			txt.value = '';
+    			txt.focus();
+    			
+    		}
+    	})
+    </script>
+</head>
+<body>
+	<input type="text" list="city" id="txt">
+	<datalist id="city">
+		<option value="广州">广州</option>
+		<option value="茂名">茂名</option>
+		<option value="潮州">潮州</option>
+		<option value="梅州">梅州</option>
+	</datalist>
+	<input type="button" id="btn" value="天气查询">
+	<div id="output">
+		<ul>
+			<!-- <li>
+				<p>日期${item.date}</p>
+				<p>最${item.high}/最${item.low}</p>
+				<p>风力${item.fengli}/风向${item.fengxiang}</p>
+			</li> -->
+		</ul>
+	</div>
+</body>
+</html>

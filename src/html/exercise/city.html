@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+		var p = new Promise((resolve,reject)=>{
+			var xhrIP = new XMLHttpRequest();
+			var status = [200,304];
+			xhrIP.onload = ()=>{
+				if(status.includes(xhrIP.status)){
+					var ip = xhrIP.responseText;
+					console.log(ip)
+					resolve(ip);
+				}
+			}
+			xhrIP.open('get','../../api/ip.php',true);
+			xhrIP.send(null);
+		})
+		p.then((ip)=>{
+			// var p2 = new Promise((resolve,reject)=>{
+				var xhrCity = new XMLHttpRequest();
+				console.log(ip)
+				var status = [200,304];
+				xhrCity.onreadystatechange = ()=>{
+    			if(xhrCity.readyState==4 && status.indexOf(xhrCity.status)!=-1){
+	    				var city = JSON.parse(xhrCity.responseText).data.city;	
+	    				console.log(xhrCity.responseText);
+
+	    			}
+	    		}
+				xhrCity.open('get','../../api/t08_city.php?ip='+ip,true);
+				xhrCity.send(null);	
+				// return p2
+			// })
+		})
+		
+	</script>	
+
+</body>
+</html>

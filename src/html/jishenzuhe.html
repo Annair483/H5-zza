@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+		function animal(jiaosheng,age){
+			this.jiaosheng = jiaosheng;
+			this.age = age;
+		}
+		animal.prototype.eat = function(){
+			console.log('jiaosheng')
+		}
+	
+		function dog(name,jiaosheng,age){
+			animal.call(this,jiaosheng,age);
+			this.name = name;
+			
+		}
+		function F(){};
+		F.prototype = animal.prototype;
+		dog.prototype = new F();
+
+		dog.prototype.fanzhi = function(){
+			console.log('luansheng');
+		}
+		dog.prototype.tian = function(){
+			console.log('tiangou')
+		}
+		var wancai = new dog('wancai','wang',2);
+		wancai.eat();
+		console.log(wancai);
+		// function animal(jiaosheng){
+		// 	this.jiaosheng = jiaosheng ;
+		// }
+		// animal.prototype.jiaosheng = function(){
+		// 	console.log('jiaog');
+		// }
+		// animal.prototype.eat = function(){
+		// 	console.log('shi');
+		// }
+		// function dog(name,jiaosheng,age){
+		// 	animal.call(this,jiaosheng);
+		// 	this.name = name;
+		// 	this.age = age;
+		// }
+		// dog.prototype = new animal();
+		// dog.prototype.tian = function(){
+		// 	console.log('tiangou');
+		// };
+		// dog.prototype.fanzhi = function(){
+		// 	console.log('taisheng');
+		// };
+		// var wangcai = new dog('wangcai','wang',2);
+
+	</script>
+</body>
+</html>

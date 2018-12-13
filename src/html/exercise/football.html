@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+        body{padding:50px;}
+        ul{list-style: none;padding:0;margin:0;}/*reset*/
+        .datalist{border:1px solid #ddd;padding:15px;}
+        .datalist li{padding:15px 5px;border-bottom:1px dotted #ccc;}
+        .datalist li h4{margin:0;}
+        .page span{display:inline-block;margin:5px;width:40px;line-height:1.8;text-align: center;background-color:#dfdfdf;color:#666;}
+        .page span.active{background-color:#fc0;color:#fff;}
+    </style>
+    <script>
+    	document.addEventListener("DOMContentLoaded",()=>{
+    		//请求数据，生成每页5条信息
+    		var datalist = document.querySelector('.datalist');
+    		var page = document.querySelector('.page');
+    		var status = [200,304];
+    		var  qty = 5;
+    		var crrpage = 1;
+    		//创建异步请求
+    		var xhr = new XMLHttpRequest();
+    		//返回服务器数据
+    		xhr.onreadystatechange = ()=>{
+    			//判断准备阶段和响应状态
+    			if(xhr.readyState==4&&status.indexOf(xhr.status)!=-1){
+    				//接收返回的数据
+    				var date = JSON.parse(xhr.responseText);
+    				//内容输出,
+    				datalist.innerHTML = date.res.map((item)=>{
+    					return `<li>
+									<h4>${item.name}</h4>
+									<p>${item.content}</p>
+    							</li>`
+    				}).join('');
+    				//创建页数
+	    			var totalPage = Math.ceil(date.len/date.qty);
+	    			//每次创建页数时先清空，再渲染
+	    			page.innerHTML = '';
+	    			for(let i=1;i<=totalPage;i++){
+	    				var span = document.createElement('span');
+	    				span.innerHTML = i;
+	    				//如果i=当前页数时 高亮
+	    				if(i== date.crrpage){
+	    					span.className = 'active';
+	    				}
+	    				page.appendChild(span);	    				
+	    			};
+    			}
+    		}
+    		//与服务器建立连接
+    		xhr.open('get','../../api/t07_football.php?qty='+qty+'&crrpage='+crrpage,true);
+    		//开始请求
+    		xhr.send(null);
+    		
+    		//点击页数时重新请求服务器，在重新渲染
+    		page.onclick=(e)=>{
+				if(e.target.tagName=='SPAN'){
+					//crrpage=点击的页数
+					crrpage=e.target.innerHTML;
+					xhr.open('get','../../api/t07_football.php?qty='+qty+'&crrpage='+crrpage,true);
+		    		//开始请求
+		    		xhr.send(null);
+				}
+			}
+    	})
+    </script>
+</head>
+<body>
+	<ul class="datalist"></ul>
+    <div class="page"></div>
+</body>
+</html>

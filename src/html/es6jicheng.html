@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script>
+		//用class定义类
+		class animal{
+			//用constructor定义属性
+			constructor(jiaos,age){
+				this.jiaos = jiaos;
+				this.age = age;
+			}
+			//方法直接写
+			eat(){
+				console.log('吃');
+			};
+		}
+		//extends   子类继承父类
+		class dog extends animal {
+			constructor(name,jiaosheng,age){
+				//super  把dog的参数传到animal的constructor上 跟借调一样
+				super(jiaosheng,age);
+				this.name = name;
+			}
+			fanzhi(){
+				console.log('孪生');
+			};
+			tian(){
+				console.log('tiangou');
+			}
+		}
+		var wancai = new dog('wangcai','wangcai',2);
+		var d = new animal('miao',3);
+		d.eat();
+		console.log(wancai.jiaos)
+		wancai.fanzhi()
+		wancai.eat()
+	</script>
+</body>
+</html>
