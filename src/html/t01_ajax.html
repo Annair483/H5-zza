@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            var output = document.getElementById("output");
+            // 一、ajax   
+            //  关键点在于XMLHttpRequest异步请求对象
+            //  (一)ajax基本请求步骤
+            //  1.创建异步请求对象
+            //  2.建立与服务器连接,设置请求参数 open(type,url,async)
+            //      * type 请求类型：get post
+            //      * url 请求路径(get请求的数据必须接在url后面)
+            //          * 相对路径：必须在同一个根目录下
+            //          * 绝对路径：同源策略
+            //              同域（同源策略）：协议，域名，端口三者一致
+            //          * 报错： No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'null' is therefore not allowed access. 说明跨域了
+            //      * async 是否异步，默认为true（异步）
+            //          * 异步：与其他操作同时执行，也叫并发（图片加载，ajax请求，定时器）
+            //          * 同步：按步骤顺序执行，前面的代码执行完后，后面的代码才会执行（排队）
+            //  3.发送请求 send()
+            //      * post: send(data)表示发请求时传送的数据字符串
+            //      * get: send(null)
+            //  4.等待响应数据解析完毕，处理服务器返回数据 
+            //      * 判断准备阶段xhr.readyState == 4，
+            //      * 判断http响应状态 xhr.status==200 || xhr.status==304
+            //      * 接收响应数据 responseText
+            var xhr = new XMLHttpRequest();
+            var status = [200,304];
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4 && status.indexOf(xhr.status) != -1){
+                    console.log(666);
+                   var res = JSON.parse(xhr.responseText);
+                   render(res);
+                }
+            }
+            // xhr.open("get","../data/goodslist.json",true);
+            xhr.open("get","http://localhost:1810/data/goodslist1.json",true);
+            xhr.send(null);
+            console.log(233);
+        })
+
+        // 渲染代码：
+        function render(res){
+            output.innerHTML = res.map(function(item,idx){
+                return `<li data-id="${item.id}">
+                            <p>商品名:${item.title}</p>
+                            <img src="${item.imgurl}" alt="">
+                            <p>价格:${item.price}</p>
+                        </li>`;
+           }).join("");
+        }
+
+       
+        //  前端需要发送请求，从后端返回数据，再渲染到页面上。模拟json数据
+        //  返回数据  字符串
+        //      data {goodsName,price,color}
+        //      status
+        //  5天 3天
+    </script>
+</head>
+<body>
+    <ul id="output"></ul>
+    
+</body>
+</html>

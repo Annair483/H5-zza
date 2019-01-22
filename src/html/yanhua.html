@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>放烟花效果</title>
+    <style type="text/css">
+    html,body{overflow:hidden;height:100%;}
+    body,div,p{margin:0;padding:0;}
+    body{background:#000;font:12px/1.5 arial;color:#7A7A7A;}
+    a{text-decoration:none;outline:none;}
+    #tips,#copyright{position:absolute;width:100%;height:50px;text-align:center;background:#171717;border:2px solid #484848;}
+    #tips{top:0;border-width:0 0 2px;}
+    #tips a{font:14px/30px arial;color:#FFF;background:#F06;display:inline-block;margin:10px 5px 0;padding:0 15px;border-radius:15px;}
+    #tips a.active{background:#FE0000;}
+    .fire {
+        width: 3px;
+        height: 30px;
+        background: white;
+        position: absolute;top:100%;
+    } 
+    .spark {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        left: 0;top:0;
+    }
+</style>
+<script src="../js/common.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded',function(){
+        /*对象：
+            *页面对象page(一个)：
+                * 属性： 显示区域、按钮
+                * 方法： 
+                    *  init() 获取光标位置，传给烟花对象（水平位置、垂直结束位置）
+            *烟花对象fire(多个)
+                * 属性：水平位置、垂直结束位置、爆炸半径、爆炸数量、速度    
+                * 方法：
+                    *  init() 生成一个div,类名为fire，设置样式（水平位置）,追加到body
+                    *  move() 利用动画，改变top值到垂直结束的位置
+                    *  createSpark() 得到每个烟火对象的结束坐标，传给烟火对象
+            * 烟火对象spark
+                * 属性：背景颜色 
+                * 方法: 
+                *     init()  生成一个dv,类名为spark,追加到当前div里面
+                *     move()  利用动画，移动到自己的结束坐标
+                *     remove() 让整个烟花消失，让爷爷把爸爸删掉
+        */
+       	let page= {
+       		showArea : document.body,
+       		init:function(){
+       			this.showArea.onclick = (e)=>{
+       				var left = e.clientX;
+       				var top = e.clientY;
+       				new fire(left,top).init();
+       			}
+       		}
+       	};
+       	function fire(left,top){
+       		this.left = left;
+       		this.topEnd = top;
+       		this.radii = getRandomNum(100,200);
+       		this.qty = getRandomNum(10,20);
+       	}
+       	fire.prototype.init=function(){
+       		this.dv = document.createElement("div");
+       		this.dv.classList.add('fire');
+       		this.dv.style.left = this.left + 'px';
+       		page.showArea.appendChild(this.dv);
+       		this.move();
+       	}
+       	fire.prototype.move=function(){
+       		animation(this.dv,{top:this.topEnd,height:3},50,()=>{
+       			for(var i= 0;i<this.qty;i++){
+       				var deg = 360/this.qty*i;
+       				var reg = Math.PI * deg / 180;
+       				var sparkX = this.radii*Math.sin(reg) - 5;
+       				var sparkY = - this.radii*Math.cos(reg) - 5;
+              this.dv.style.height = 0;
+       				new spark(this.dv,sparkX,sparkY).init();
+              console.log(sparkY)
+       			}
+       		})
+       	}
+        function spark(parent,left,top){
+          this.bgColor = getRandomColor();
+          this.left = left;
+          this.top = top;
+          this.parent = parent;
+        }
+        spark.prototype.init=function(){
+          this.span = document.createElement('span');
+          this.span.classList.add('spark');
+          this.span.style.backgroundColor = this.bgColor;
+          this.parent.appendChild(this.span);
+          this.move();
+        }
+        spark.prototype.move=function(){
+          animation(this.span,{left:parseInt(this.left),top:parseInt(this.top),opacity:0.3},50,()=>{
+            this.remove();
+          })
+        }
+        spark.prototype.remove = function(){
+          this.span.parentElement.removeChild(this.span)
+        }
+       	page.init()
+
+
+    });
+    
+</script>
+</head>
+<body>
+    <div id="tips"><a id="auto" href="javascript:;" class="">自动放烟花</a></div>
+    
+</body>
+</html>

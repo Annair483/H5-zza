@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script>
+		document.addEventListener('DOMContentLoaded',()=>{
+			let txt = document.querySelector('.txt');
+			let output = document.querySelector('.output');
+			txt.oninput = function(){
+				let _txt = txt.value;
+				clearTimeout(this.timer);
+				this.timer = setTimeout(()=>{
+					let script = document.createElement('script');
+					script.src = 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?json=1&cb=show&wd='+_txt;
+					document.body.appendChild(script);
+				},500)
+				
+			}
+			window.show=function(date){
+				output.innerHTML = date.s.map(function(item){
+					return `<li>${item}</li>`;
+				}).join('');
+			}
+		})
+		
+ </script>
+</head>
+<body>
+	<input type="text" class="txt">
+	<ul class="output"></ul>
+	
+</body>
+</html>
